@@ -1,3 +1,4 @@
+import 'package:bytebank/components/dialogo_transacao.dart';
 import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class ByteBankApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: TextTheme(
             bodyText1: TextStyle(fontSize: 24.0),
-            button: TextStyle(fontSize: 24)),
+            button: TextStyle(fontSize: 16)),
         primarySwatch: Colors.green,
         iconTheme: IconThemeData(color: Colors.white),
       ),

@@ -1,47 +1,40 @@
 import 'dart:convert';
-
-import 'package:bytebank/models/contato_model.dart';
 import 'package:bytebank/models/transacao_model.dart';
 import 'package:http/http.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 
 import 'interceptors/logging_interceptor.dart';
 
-final Client client =
-    InterceptedClient.build(interceptors: [LoggingInterceptor()]);
+final Client client = InterceptedClient.build(
+    interceptors: [LoggingInterceptor()],
+    requestTimeout: Duration(milliseconds: 500));
 
 Future<List<Transacao>> findAll() async {
-  final Response res = await client
-      .get(Uri.http('192.168.1.181:8080', '/transactions'))
-      .timeout(const Duration(seconds: 5));
+  final Response res =
+      await client.get(Uri.http('192.168.1.181:8080', '/transactions'));
   final List<dynamic> decodedJson = jsonDecode(res.body);
-  final List<Transacao> transacoes = [];
-  for (Map<String, dynamic> elemento in decodedJson) {
-    final Transacao transacao = Transacao(
-        elemento['value'],
-        Contato(0, elemento['contact']['name'],
-            elemento['contact']['accountNumber']));
-    transacoes.add(transacao);
-  }
-  return transacoes;
+  return decodedJson.map((dynamic json) => Transacao.fromJson(json)).toList();
 }
 
-Future<Transacao> salvarDados(Transacao transacao) async {
-  final Map<String, dynamic> transacaoMap = {
-    'value': transacao.value,
-    'contact': {
-      'name': transacao.contato.nome,
-      'accountNumber': transacao.contato.conta
-    }
-  };
-  final String transacaoJson = jsonEncode(transacaoMap);
+Future<Transacao> salvarDados(Transacao transacao, String senha) async {
+  final String transacaoJson = jsonEncode(transacao.toJson());
+
+  await Future.delayed(Duration(seconds: 10));
 
   final Response res = await client.post(
       Uri.http('192.168.1.181:8080', '/transactions'),
-      headers: {'password': '1000', 'Content-Type': 'application/json'},
+      headers: {'password': senha, 'Content-Type': 'application/json'},
       body: transacaoJson);
 
-  Map<String, dynamic> json = jsonDecode(res.body);
-  return Transacao(json['value'],
-      Contato(0, json['contact']['name'], json['contact']['accountNumber']));
+  if (res.statusCode != 200) {
+    _httpError(res.statusCode);
+  }
+
+  return Transacao.fromJson(jsonDecode(res.body));
+}
+
+void _httpError(int statusCode) {
+  if (statusCode == 401) {
+    throw Exception("Senha inválida");
+  }
 }

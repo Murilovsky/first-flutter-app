@@ -32,8 +32,7 @@ class ContatoDAO {
   List<Contato> _toList(List<Map<String, dynamic>> resultado) {
     final List<Contato> contatos = [];
     for (Map<String, dynamic> row in resultado) {
-      final Contato contato =
-          Contato(row['id'], row['nome'], row['numero_conta']);
+      final Contato contato = Contato(row['nome'], row['numero_conta']);
       contatos.add(contato);
     }
     return contatos;

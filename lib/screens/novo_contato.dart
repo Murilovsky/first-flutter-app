@@ -48,8 +48,9 @@ class NovoContato extends StatelessWidget {
                           final int? conta =
                               int.tryParse(_contaController.text);
                           if (nome != null && conta != null) {
-                            final novoContato = Contato(0, nome, conta);
-                            _dao.save(novoContato)
+                            final novoContato = Contato(nome, conta);
+                            _dao
+                                .save(novoContato)
                                 .then((id) => Navigator.pop(context));
                           }
                         },
