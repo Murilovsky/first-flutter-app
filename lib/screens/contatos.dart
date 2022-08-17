@@ -29,7 +29,7 @@ class _ContatosListaState extends State<ContatosLista> {
               Text('Nenhum contato salvo', style: TextStyle(fontSize: 32));
               break;
             case ConnectionState.waiting:
-              return Progresso(message: 'Carregando contatos');
+              return Progresso('Carregando contatos');
 
             case ConnectionState.active:
               return Text('');

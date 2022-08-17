@@ -20,7 +20,7 @@ class TransferenciasLista extends StatelessWidget {
                   break;
 
                 case ConnectionState.waiting:
-                  return Progresso(message: 'Carregando transferências');
+                  return Progresso('Carregando Transferências');
 
                 case ConnectionState.active:
                   break;

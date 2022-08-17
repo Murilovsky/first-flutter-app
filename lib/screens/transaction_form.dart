@@ -1,9 +1,11 @@
 import 'package:bytebank/api/web_client.dart';
 import 'package:bytebank/components/dialogo_transacao.dart';
+import 'package:bytebank/components/progresso.dart';
 import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/models/contato_model.dart';
 import 'package:bytebank/models/transacao_model.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class FormularioTransacao extends StatefulWidget {
   final Contato contato;
@@ -16,6 +18,9 @@ class FormularioTransacao extends StatefulWidget {
 
 class _FormularioTransacaoState extends State<FormularioTransacao> {
   final TextEditingController _valueController = TextEditingController();
+  final String transacaoID = Uuid().v4();
+  bool _enviando = false;
+
   bool isButtonDisabled = true;
   @override
   Widget build(BuildContext context) {
@@ -29,6 +34,9 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    Visibility(
+                        child: Progresso('Processando transferência'),
+                        visible: _enviando),
                     Text(
                       widget.contato.nome,
                       style: TextStyle(
@@ -78,8 +86,8 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
                                       final double value =
                                           double.tryParse(_valueController.text)
                                               as double;
-                                      final transactionCreated =
-                                          Transacao(value, widget.contato);
+                                      final transactionCreated = Transacao(
+                                          transacaoID, value, widget.contato);
 
                                       showDialog(
                                           context: context,
@@ -96,27 +104,35 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
   }
 
   _SalvarDados(Transacao transactionCreated, BuildContext context) {
-    return ((password) =>
-        salvarDados(transactionCreated, password).catchError((erro) {
+    return ((password) {
+      setState(() {
+        _enviando = true;
+      });
+      salvarDados(transactionCreated, password).catchError((erro) {
+        showDialog(
+            context: context,
+            builder: (contextDialog) {
+              return FailureDialog('Não foi possível realizar a transação');
+            });
+      }).then((trans) {
+        if (trans != null) {
           showDialog(
               context: context,
               builder: (contextDialog) {
-                return FailureDialog('Não foi possível realizar a transação');
-              });
-        }).then((trans) {
-          if (trans != null) {
-            showDialog(
-                context: context,
-                builder: (contextDialog) {
-                  return SuccessDialog('Transferência Realizada');
-                }).then((value) => Navigator.pop(context));
-          }
-        }).catchError((erro) {
-          showDialog(
-              context: context,
-              builder: (contextDialog) {
-                return FailureDialog(erro.message);
-              });
-        }));
+                return SuccessDialog('Transferência Realizada');
+              }).then((value) => Navigator.pop(context));
+        }
+      }).catchError((erro) {
+        showDialog(
+            context: context,
+            builder: (contextDialog) {
+              return FailureDialog(erro.message);
+            });
+      }).whenComplete(() {
+        setState(() {
+          _enviando = false;
+        });
+      });
+    });
   }
 }

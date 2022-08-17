@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Progresso extends StatelessWidget {
-  const Progresso({Key? key, String? message}) : super(key: key);
+  const Progresso(this.message, {Key? key}) : super(key: key);
 
-  final String message = '';
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +13,14 @@ class Progresso extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
           CircularProgressIndicator(strokeWidth: 6),
-          Text(message,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(message,
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[900])),
+          )
         ]));
   }
 }
