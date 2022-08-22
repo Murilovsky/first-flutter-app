@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:bytebank/components/saldo_card.dart';
 import 'package:bytebank/screens/central_ajuda.dart';
 import 'package:bytebank/screens/contatos.dart';
 import 'package:bytebank/screens/historico_tranferencias.dart';
+import 'package:bytebank/screens/pagina_deposito.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatelessWidget {
@@ -17,13 +19,26 @@ class Dashboard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Image.asset('images/bytebank_logo.png'),
+            Center(
+              child: Column(
+                children: [
+                  SaldoCard(),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => TelaDeposito()));
+                      },
+                      child: Text('Novo depósito'))
+                ],
+              ),
+            ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
                   _FeatureItem(
                     itemIcon: Icons.monetization_on,
-                    itemName: 'Transferências',
+                    itemName: 'Transferir',
                     buttonClick: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ContatosLista()));

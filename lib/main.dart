@@ -1,10 +1,13 @@
-import 'package:bytebank/components/dialogo_transacao.dart';
+import 'package:bytebank/models/saldo.dart';
 import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const ByteBankApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => Saldo(2000),
+    child: ByteBankApp(),
+  ));
 }
 
 class ByteBankApp extends StatelessWidget {
