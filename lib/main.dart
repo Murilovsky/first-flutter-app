@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(
-    create: (context) => Saldo(2000),
+    create: (context) => Saldo(0),
     child: ByteBankApp(),
   ));
 }

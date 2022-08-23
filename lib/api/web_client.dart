@@ -8,7 +8,7 @@ import 'interceptors/logging_interceptor.dart';
 
 final Client client = InterceptedClient.build(
     interceptors: [LoggingInterceptor()],
-    requestTimeout: Duration(milliseconds: 5000));
+    requestTimeout: const Duration(milliseconds: 5000));
 
 Future<List<Transacao>> findAll() async {
   final Response res =
@@ -20,7 +20,7 @@ Future<List<Transacao>> findAll() async {
 Future<Transacao> salvarDados(Transacao transacao, String senha) async {
   final String transacaoJson = jsonEncode(transacao.toJson());
 
-  await Future.delayed(Duration(seconds: 5));
+  await Future.delayed(const Duration(seconds: 1));
 
   final Response res = await client.post(
       Uri.http('192.168.1.181:8080', '/transactions'),

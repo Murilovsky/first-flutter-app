@@ -5,7 +5,10 @@ import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/models/contato_model.dart';
 import 'package:bytebank/models/transacao_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+
+import '../models/saldo.dart';
 
 class FormularioTransacao extends StatefulWidget {
   final Contato contato;
@@ -18,15 +21,15 @@ class FormularioTransacao extends StatefulWidget {
 
 class _FormularioTransacaoState extends State<FormularioTransacao> {
   final TextEditingController _valueController = TextEditingController();
-  final String transacaoID = Uuid().v4();
+  final String transacaoID = const Uuid().v4();
   bool _enviando = false;
-
+  bool _saldoIns = false;
   bool isButtonDisabled = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Nova Transação'),
+          title: const Text('Nova Transação'),
         ),
         body: SingleChildScrollView(
             child: Padding(
@@ -35,11 +38,11 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Visibility(
-                        child: Progresso('Processando transferência'),
-                        visible: _enviando),
+                        visible: _enviando,
+                        child: const Progresso('Processando transferência')),
                     Text(
                       widget.contato.nome,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24.0,
                       ),
                     ),
@@ -47,7 +50,7 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
                       padding: const EdgeInsets.only(top: 16.0),
                       child: Text(
                         widget.contato.conta.toString(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 32.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -57,21 +60,23 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
                       padding: const EdgeInsets.only(top: 16.0),
                       child: TextField(
                         controller: _valueController,
-                        onChanged: (value) {
-                          if (value.length > 0) {
-                            setState(() {
-                              isButtonDisabled = false;
-                            });
-                          } else {
-                            setState(() {
-                              isButtonDisabled = true;
-                            });
-                          }
-                        },
-                        style: TextStyle(fontSize: 24.0),
-                        decoration: InputDecoration(labelText: 'Valor'),
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
+                        onChanged: _verificaValor,
+                        style: const TextStyle(fontSize: 24.0),
+                        decoration: const InputDecoration(labelText: 'Valor'),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Visibility(
+                        visible: _saldoIns,
+                        child: Text(
+                          'Saldo insuficiente',
+                          style:
+                              TextStyle(color: Colors.red[300], fontSize: 16),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                     Padding(
@@ -79,13 +84,11 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
                       child: SizedBox(
                           width: double.maxFinite,
                           child: ElevatedButton(
-                              child: Text('Transferir'),
                               onPressed: isButtonDisabled
                                   ? null
                                   : () {
                                       final double value =
-                                          double.tryParse(_valueController.text)
-                                              as double;
+                                          double.parse(_valueController.text);
                                       final transactionCreated = Transacao(
                                           transacaoID, value, widget.contato);
 
@@ -93,17 +96,39 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
                                           context: context,
                                           builder: (contextDialog) {
                                             return AuthDialogoTransferencia(
-                                              onConfirm: _SalvarDados(
+                                              onConfirm: _salvarDados(
                                                   transactionCreated, context),
                                             );
                                           });
-                                    })),
+                                    },
+                              child: const Text('Transferir'))),
                     )
                   ],
                 ))));
   }
 
-  _SalvarDados(Transacao transactionCreated, BuildContext context) {
+  void _verificaValor(value) {
+    final check = double.tryParse(value);
+    if (check != null && check > 0) {
+      if (Provider.of<Saldo>(context, listen: false).valor >= check) {
+        setState(() {
+          _saldoIns = false;
+          isButtonDisabled = false;
+        });
+      } else {
+        setState(() {
+          _saldoIns = true;
+          isButtonDisabled = true;
+        });
+      }
+    } else {
+      setState(() {
+        isButtonDisabled = true;
+      });
+    }
+  }
+
+  _salvarDados(Transacao transactionCreated, BuildContext context) {
     return ((password) {
       setState(() {
         _enviando = true;
@@ -115,13 +140,12 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
               return FailureDialog('Não foi possível realizar a transação');
             });
       }).then((trans) {
-        if (trans != null) {
-          showDialog(
-              context: context,
-              builder: (contextDialog) {
-                return SuccessDialog('Transferência Realizada');
-              }).then((value) => Navigator.pop(context));
-        }
+        Provider.of<Saldo>(context, listen: false).gasta(trans.value);
+        showDialog(
+            context: context,
+            builder: (contextDialog) {
+              return SuccessDialog('Transferência Realizada');
+            }).then((value) => Navigator.pop(context));
       }).catchError((erro) {
         showDialog(
             context: context,

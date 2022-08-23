@@ -14,56 +14,58 @@ class Dashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('Dashboard')),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Image.asset('images/bytebank_logo.png'),
-            Center(
-              child: Column(
-                children: [
-                  SaldoCard(),
-                  ElevatedButton(
-                      onPressed: () {
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Image.asset('images/bytebank_logo.png'),
+              Center(
+                child: Column(
+                  children: [
+                    SaldoCard(),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => TelaDeposito()));
+                        },
+                        child: Text('Novo depósito'))
+                  ],
+                ),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _FeatureItem(
+                      itemIcon: Icons.monetization_on,
+                      itemName: 'Transferir',
+                      buttonClick: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => TelaDeposito()));
+                            builder: (context) => ContatosLista()));
                       },
-                      child: Text('Novo depósito'))
-                ],
-              ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _FeatureItem(
-                    itemIcon: Icons.monetization_on,
-                    itemName: 'Transferir',
-                    buttonClick: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ContatosLista()));
-                    },
-                  ),
-                  _FeatureItem(
-                    itemIcon: Icons.list,
-                    itemName: 'Histórico de Transferências',
-                    buttonClick: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => TransferenciasLista()));
-                    },
-                  ),
-                  _FeatureItem(
-                    itemIcon: Icons.help,
-                    itemName: 'Central de Ajuda',
-                    buttonClick: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => CentralAjuda()));
-                    },
-                  )
-                ],
-              ),
-            )
-          ],
+                    ),
+                    _FeatureItem(
+                      itemIcon: Icons.list,
+                      itemName: 'Histórico de Transferências',
+                      buttonClick: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => TransferenciasLista()));
+                      },
+                    ),
+                    _FeatureItem(
+                      itemIcon: Icons.help,
+                      itemName: 'Central de Ajuda',
+                      buttonClick: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => CentralAjuda()));
+                      },
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ));
   }
 }
