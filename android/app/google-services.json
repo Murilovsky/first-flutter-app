@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "392830913223",
+    "project_id": "alura-flutter-crashlytic-29e56",
+    "storage_bucket": "alura-flutter-crashlytic-29e56.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392830913223:android:82a7bfc43999ceba744ce2",
+        "android_client_info": {
+          "package_name": "com.murilovsky.bytebank"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392830913223-vdpq62lvt61h4kudu0sm4effhis2etqh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA2dpRdrBgiPImQO4LQ7km7EcWgoZWAuI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392830913223-vdpq62lvt61h4kudu0sm4effhis2etqh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "392830913223-aadcb36m0bd44kjkfqui2r0hus14gpfn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.murilovsky.bytebank"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

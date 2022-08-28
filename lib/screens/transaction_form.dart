@@ -4,6 +4,8 @@ import 'package:bytebank/components/progresso.dart';
 import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/models/contato_model.dart';
 import 'package:bytebank/models/transacao_model.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -134,6 +136,7 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
         _enviando = true;
       });
       salvarDados(transactionCreated, password).catchError((erro) {
+        FirebaseCrashlytics.instance.recordError(erro.message, null);
         showDialog(
             context: context,
             builder: (contextDialog) {
@@ -147,6 +150,7 @@ class _FormularioTransacaoState extends State<FormularioTransacao> {
               return SuccessDialog('Transferência Realizada');
             }).then((value) => Navigator.pop(context));
       }).catchError((erro) {
+        FirebaseCrashlytics.instance.recordError(erro.message, null);
         showDialog(
             context: context,
             builder: (contextDialog) {
