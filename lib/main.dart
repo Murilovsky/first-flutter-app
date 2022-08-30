@@ -26,8 +26,8 @@ class ByteBankApp extends StatelessWidget {
       title: 'ByteBank',
       theme: ThemeData(
         textTheme: const TextTheme(
-            bodyText1: const TextStyle(fontSize: 24.0),
-            button: const TextStyle(fontSize: 16)),
+            bodyText1: TextStyle(fontSize: 24.0),
+            button: TextStyle(fontSize: 16)),
         primarySwatch: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
