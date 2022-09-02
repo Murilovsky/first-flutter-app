@@ -32,7 +32,7 @@ Future<Transacao> salvarDados(Transacao transacao, String senha) async {
   await Future.delayed(const Duration(seconds: 1));
 
   final Response res = await client
-      .post(Uri.http('192.168.1.182:8080', '/transactions'),
+      .post(Uri.http('192.168.1.181:8080', '/transactions'),
           headers: {'password': senha, 'Content-Type': 'application/json'},
           body: transacaoJson)
       .catchError((erro) {
